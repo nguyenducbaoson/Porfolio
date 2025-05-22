@@ -3,7 +3,7 @@ import gsap from "gsap";
 
 import TitleHeader from "../components/TitleHeader";
 import { techStackIcons } from "../constants";
-import TechIconCardExperience from "../components/models/tech_logos/TechIconCardExperience";
+import TechIconCardExperience, { type ModelProps } from "../components/models/tech_logos/TechIconCardExperience";
 
 const TechStack = () => {
   useGSAP(() => {
@@ -45,7 +45,7 @@ const TechStack = () => {
               <div className="tech-card-animated-bg" />
               <div className="tech-card-content">
                 <div className="tech-icon-wrapper">
-                  <TechIconCardExperience model={techStackIcon} />
+                  <TechIconCardExperience model={techStackIcon as ModelProps} />
                 </div>
                 <div className="padding-x w-full">
                   <p>{techStackIcon.name}</p>

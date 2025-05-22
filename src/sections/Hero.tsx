@@ -1,7 +1,6 @@
 import AnimatedCounter from '../components/AnimatedCounter';
 import Button from '../components/Button'
 import EarthCanvas from '../components/Earth';
-import HeroExperience from '../components/models/hero_models/HeroExperience'
 import { words } from '../constants'
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";

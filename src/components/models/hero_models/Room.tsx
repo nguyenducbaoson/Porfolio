@@ -46,14 +46,13 @@ export function Room(props: JSX.IntrinsicElements['group']) {
     color: "#000",
   });
 
-  const screensRef = useRef();
+  const screensRef = useRef<THREE.Mesh>(null);
   const { nodes, materials } = useGLTF('/models/optimized-room.glb') as unknown as GLTFResult
 
     return (
     <group {...props} dispose={null}>
-      <EffectComposer>
+      <EffectComposer> 
         <SelectiveBloom
-          selection={screensRef}
           intensity={1.5} // Strength of the bloom
           luminanceThreshold={0.2} // Minimum luminance needed
           luminanceSmoothing={0.9} // Smooth transition

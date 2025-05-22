@@ -1,4 +1,4 @@
-import { useRef, ReactNode, type MouseEvent } from "react";
+import { useRef, type MouseEvent, type ReactNode } from "react";
 
 type CardData = {
   review: string;
@@ -29,7 +29,6 @@ const GlowCard = ({ card, index, children }: GlowCardProps) => {
 
   return (
     <div
-      ref={(el) => (cardRefs.current[index] = el)}
       onMouseMove={handleMouseMove(index)}
       className="card card-border timeline-card rounded-xl p-10 mb-5 break-inside-avoid-column"
     >

@@ -3,10 +3,10 @@ import { Canvas } from "@react-three/fiber";
 import { useEffect } from "react";
 import * as THREE from "three";
 
-type ModelProps = {
+export type ModelProps = {
   modelPath: string;
   name: string;
-  scale: [number, number, number];
+  scale: number | [number, number, number];
   rotation: [number, number, number];
 };
 
@@ -16,6 +16,11 @@ type TechIconCardExperienceProps = {
 
 const TechIconCardExperience = ({ model }: TechIconCardExperienceProps) => {
   const scene = useGLTF(model.modelPath);
+
+  // ✨ Chuyển scale thành tuple nếu là số
+  const scale: [number, number, number] = Array.isArray(model.scale)
+    ? model.scale
+    : [model.scale, model.scale, model.scale];
 
   useEffect(() => {
     if (model.name === "Interactive Developer") {
@@ -36,7 +41,7 @@ const TechIconCardExperience = ({ model }: TechIconCardExperienceProps) => {
       <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={2} />
       <Environment preset="city" />
       <Float speed={5.5} rotationIntensity={0.5} floatIntensity={0.9}>
-        <group scale={model.scale} rotation={model.rotation}>
+        <group scale={scale} rotation={model.rotation}>
           <primitive object={scene.scene} />
         </group>
       </Float>
