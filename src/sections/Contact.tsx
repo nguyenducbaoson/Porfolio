@@ -1,8 +1,9 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import emailjs from "@emailjs/browser";
-
 import TitleHeader from "../components/TitleHeader";
 import ContactExperience from "../components/models/contact/ContactExperience";
+import { sendMailAsync } from "../api";
+import FullScreenLoader from "../components/LoadingSpinner";
+import Notification from "../components/Notification";
 
 type FormState = {
   name: string;
@@ -19,7 +20,23 @@ const Contact = () => {
     message: "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const [notif, setNotif] = useState<{
+    message: string;
+    type: "success" | "error";
+    show: boolean;
+  }>({
+    message: "",
+    type: "success",
+    show: false,
+  });
+
+  const showNotification = (message: string, type: "success" | "error") => {
+    setNotif({ message, type, show: true });
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
@@ -29,18 +46,20 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      if (!formRef.current) return;
+      const result = await sendMailAsync(form.email, form.name, form.message);
 
-      await emailjs.sendForm(
-        import.meta.env.VITE_APP_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID,
-        formRef.current,
-        import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY
-      );
-
-      setForm({ name: "", email: "", message: "" });
+      if (result.status === "success") {
+        showNotification(result.message, "success");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        showNotification("Failed to send message: " + result.message, "error");
+      }
     } catch (error) {
-      console.error("EmailJS Error:", error);
+      console.error("SendMail API error:", error);
+      showNotification(
+        "An unexpected error occurred while sending your message.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -103,9 +122,7 @@ const Contact = () => {
                 <button type="submit">
                   <div className="cta-button group">
                     <div className="bg-circle" />
-                    <p className="text">
-                      {loading ? "Sending..." : "Send Message"}
-                    </p>
+                    <p className="text">Send Message</p>
                     <div className="arrow-wrapper">
                       <img src="/images/arrow-down.svg" alt="arrow" />
                     </div>
@@ -121,6 +138,13 @@ const Contact = () => {
           </div>
         </div>
       </div>
+
+      <Notification message={notif.message}
+        type={notif.type}
+        show={notif.show}
+        onClose={() => setNotif({ ...notif, show: false })}/>
+
+      {loading && <FullScreenLoader />}
     </section>
   );
 };
